@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="EVMWallet.connectWallet({ chainId: 56  })">my button</button>
+    <script>
+    </script>
+    <!-- <button onclick="clickit()">my button</button> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/Nworah-Gabriel/Injector@v1.0.0/connector.min.js"></script> -->
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- // ====================== OPTIONAL HTML INTEGRATION ======================
+    // This part is only included if running in a browser environment
+    if (typeof window !== 'undefined') {
+        /**
+        * Simple HTML UI integration helper
+        * @param {HTMLElement} container - DOM element to render UI into
+        */
+        function renderWalletUI(container) {
+        if (!container) return;
+        
+        // Create network selector
+        const chainSelect = document.createElement('select');
+        chainSelect.innerHTML = `
+            <option value="">Select Network (Optional)</option>
+            ${Object.entries(EVM_CHAINS).map(([id, chain]) => `
+            <option value="${id}">${chain.name}</option>
+            `).join('')}
+        `;
+        
+        // Create connect button
+        const connectBtn = document.createElement('button');
+        connectBtn.textContent = 'Connect Wallet';
+        connectBtn.style.margin = '10px 0';
+        connectBtn.style.padding = '10px 15px';
+        
+        // Create status display
+        const statusDiv = document.createElement('div');
+        statusDiv.style.marginTop = '20px';
+        
+        // Add elements to container
+        container.appendChild(chainSelect);
+        container.appendChild(connectBtn);
+        container.appendChild(statusDiv);
+        
+        // Connect handler
+        connectBtn.addEventListener('click', async () => {
+            const chainId = chainSelect.value ? parseInt(chainSelect.value) : undefined;
+            
+            // Handle provider selection if multiple wallets
+            const providers = detectProviders();
+            let selectedProvider;
+            
+            if (providers.length > 1) {
+            statusDiv.innerHTML = '<p>Please select your wallet:</p>';
+            providers.forEach(provider => {
+                const btn = document.createElement('button');
+                btn.textContent = `Connect with ${getProviderName(provider)}`;
+                btn.style.display = 'block';
+                btn.style.margin = '5px 0';
+                btn.style.padding = '8px 12px';
+                
+                btn.addEventListener('click', async () => {
+                statusDiv.innerHTML = '<p>Connecting...</p>';
+                const result = await connectProvider(provider, chainId);
+                displayResult(result);
+                });
+                
+                statusDiv.appendChild(btn);
+            });
+            return;
+            }
+            
+            // Single provider flow
+            statusDiv.innerHTML = '<p>Connecting...</p>';
+            const result = await connectWallet({ chainId });
+            displayResult(result);
+        });
+        
+        function displayResult(result) {
+            if (result.success) {
+            statusDiv.innerHTML = `
+                <h3>Connected Successfully</h3>
+                <p><strong>Wallet:</strong> ${result.provider}</p>
+                <p><strong>Network:</strong> ${result.chainName}</p>
+                <p><strong>Account:</strong> ${result.account}</p>
+            `;
+            } else {
+            statusDiv.innerHTML = `
+                <h3 style="color: red;">Connection Failed</h3>
+                <p><strong>Error:</strong> ${result.error}</p>
+            `;
+            }
+        }
+        }
+        
+        // Add render function to global object
+        if (window.EVMWallet) {
+        window.EVMWallet.renderUI = renderWalletUI;
+        }
+    } -->
