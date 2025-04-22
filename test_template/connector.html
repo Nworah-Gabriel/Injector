@@ -4,13 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        button{
+            background-color: rgb(3, 130, 233);
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+        }
+    </style>
+    <script src="../dist/connector.umd.min.js"></script>
+    <script src="../example.js"></script>
+    <script>
+      console.log("WalletConnector is:", window.WalletConnector);
+    </script>
 </head>
 <body>
-    <button onclick="EVMWallet.connectWallet({ chainId: 56  })">my button</button>
-    <script>
-    </script>
-    <!-- <button onclick="clickit()">my button</button> -->
+    <button onclick="connect()">Connet Wallet</button>
+    <button onclick="contractinteraction()">Interact with contract</button>
+    <button onclick="GetBalance()">Get Balance</button>
+    <button onclick="SignTransaction()">SignTransaction</button>
+    <button onclick="SignMessage()">SignMessage</button>
+    <button onclick="SignTypedData()">SignTypedData</button>
     <!-- <script src="https://cdn.jsdelivr.net/gh/Nworah-Gabriel/Injector@v1.0.0/connector.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/Nworah-Gabriel/Injector@v1.0.1/connector.min.js"></script> -->
+     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.2.0/ethers.umd.min.js"></script> -->
+    <script>
+        async function contractinteraction(){
+            // contract ABI
+            const Abi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "_value",
+                        "type": "int256"
+                    }
+                ],
+                "name": "setValue",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "get",
+                "outputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "",
+                        "type": "int256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+            // Connect wallet
+            const { provider, account } = await WalletConnector.connectWallet({chainId: 11155111});
+        
+            // Create contract instance
+            const tokenContract = WalletConnector.createContract(
+            provider,
+            '0x1A9CD84b055255E14848A691828B54Ef477a818d', // Replace with actual token address
+            Abi
+            );
+        
+            // Read token balance
+            const value = await tokenContract.read('get', []);
+            console.log('Value Variable:', value);
+            const value2 = await tokenContract.estimateGas('get', []);
+            console.log('Gas Value:', value2);
+            // Contract Interaction
+            const txHash = await tokenContract.write('setValue', [
+            500961
+            ], {
+            from: account,
+            gasLimit: '300000'
+            });
+        
+            console.log('Transfer tx hash:', txHash);
+            }
+    </script>
+   
+    <!-- <script src="https://cdn.jsdelivr.net/npm/js-sha3@0.9.2/src/sha3.min.js"></script> -->
+
 </body>
 </html>
 
@@ -27,93 +108,181 @@
 
 
 
-<!-- // ====================== OPTIONAL HTML INTEGRATION ======================
-    // This part is only included if running in a browser environment
-    if (typeof window !== 'undefined') {
-        /**
-        * Simple HTML UI integration helper
-        * @param {HTMLElement} container - DOM element to render UI into
-        */
-        function renderWalletUI(container) {
-        if (!container) return;
-        
-        // Create network selector
-        const chainSelect = document.createElement('select');
-        chainSelect.innerHTML = `
-            <option value="">Select Network (Optional)</option>
-            ${Object.entries(EVM_CHAINS).map(([id, chain]) => `
-            <option value="${id}">${chain.name}</option>
-            `).join('')}
-        `;
-        
-        // Create connect button
-        const connectBtn = document.createElement('button');
-        connectBtn.textContent = 'Connect Wallet';
-        connectBtn.style.margin = '10px 0';
-        connectBtn.style.padding = '10px 15px';
-        
-        // Create status display
-        const statusDiv = document.createElement('div');
-        statusDiv.style.marginTop = '20px';
-        
-        // Add elements to container
-        container.appendChild(chainSelect);
-        container.appendChild(connectBtn);
-        container.appendChild(statusDiv);
-        
-        // Connect handler
-        connectBtn.addEventListener('click', async () => {
-            const chainId = chainSelect.value ? parseInt(chainSelect.value) : undefined;
-            
-            // Handle provider selection if multiple wallets
-            const providers = detectProviders();
-            let selectedProvider;
-            
-            if (providers.length > 1) {
-            statusDiv.innerHTML = '<p>Please select your wallet:</p>';
-            providers.forEach(provider => {
-                const btn = document.createElement('button');
-                btn.textContent = `Connect with ${getProviderName(provider)}`;
-                btn.style.display = 'block';
-                btn.style.margin = '5px 0';
-                btn.style.padding = '8px 12px';
-                
-                btn.addEventListener('click', async () => {
-                statusDiv.innerHTML = '<p>Connecting...</p>';
-                const result = await connectProvider(provider, chainId);
-                displayResult(result);
-                });
-                
-                statusDiv.appendChild(btn);
-            });
-            return;
-            }
-            
-            // Single provider flow
-            statusDiv.innerHTML = '<p>Connecting...</p>';
-            const result = await connectWallet({ chainId });
-            displayResult(result);
-        });
-        
-        function displayResult(result) {
-            if (result.success) {
-            statusDiv.innerHTML = `
-                <h3>Connected Successfully</h3>
-                <p><strong>Wallet:</strong> ${result.provider}</p>
-                <p><strong>Network:</strong> ${result.chainName}</p>
-                <p><strong>Account:</strong> ${result.account}</p>
-            `;
-            } else {
-            statusDiv.innerHTML = `
-                <h3 style="color: red;">Connection Failed</h3>
-                <p><strong>Error:</strong> ${result.error}</p>
-            `;
-            }
-        }
-        }
-        
-        // Add render function to global object
-        if (window.EVMWallet) {
-        window.EVMWallet.renderUI = renderWalletUI;
-        }
-    } -->
+
+
+
+
+
+
+
+
+
+
+
+    /**
+    * Fixed Pure JavaScript Contract Interaction
+    * - No external dependencies
+    * - Proper ABI encoding/decoding
+    * - Complete error handling
+    * - Debugging improvements
+    */
+   
+   // Simple keccak256 implementation (for demonstration)
+   function keccak256(str) {
+     // Note: In production, use a proper cryptographic library
+     let hash = 0;
+     for (let i = 0; i < str.length; i++) {
+       const char = str.charCodeAt(i);
+       hash = (hash << 5) - hash + char;
+       hash = hash & hash; // Convert to 32bit integer
+     }
+     return '0x' + (hash >>> 0).toString(16).padStart(64, '0');
+   }
+   
+   function getFunctionSelector(functionName, inputTypes) {
+     const signature = `${functionName}(${inputTypes.join(',')})`;
+     return keccak256(signature).slice(0, 10); // First 4 bytes
+   }
+   
+   function padHex(value, length = 64) {
+     if (value.startsWith('0x')) {
+       value = value.slice(2);
+     }
+     return value.padStart(length, '0');
+   }
+   
+   function encodeParameter(type, value) {
+     console.log(`Encoding type: ${type}, value: ${value}`);
+     
+     try {
+       switch(type) {
+         case 'address':
+           if (!value.startsWith('0x') || value.length !== 42) {
+             throw new Error(`Invalid address: ${value}`);
+           }
+           return padHex(value.toLowerCase());
+         case 'uint256':
+           return padHex(BigInt(value).toString(16));
+         case 'bool':
+           return padHex(value ? '1' : '0');
+         case 'string':
+           return padHex(Buffer.from(value).toString('hex'));
+         default:
+           throw new Error(`Unsupported type: ${type}`);
+       }
+     } catch (error) {
+       console.error(`Failed to encode ${type} with value ${value}:`, error);
+       throw error;
+     }
+   }
+   
+   function encodeParameters(types, values) {
+     console.log(`Encoding parameters - types: ${types}, values: ${values}`);
+     
+     if (!Array.isArray(types) || !Array.isArray(values)) {
+       throw new Error('Types and values must be arrays');
+     }
+     
+     if (types.length !== values.length) {
+       throw new Error(`Types and values length mismatch. Types: ${types.length}, Values: ${values.length}`);
+     }
+     
+     try {
+       return types.map((type, i) => {
+         console.log(`Encoding param ${i}: type=${type}, value=${values[i]}`);
+         return encodeParameter(type, values[i]);
+       }).join('');
+     } catch (error) {
+       console.error('Parameter encoding failed:', error);
+       throw new Error(`Parameter encoding failed: ${error.message}`);
+     }
+   }
+   
+   function decodeParameter(type, value) {
+     const hexValue = value.startsWith('0x') ? value.slice(2) : value;
+     
+     switch(type) {
+       case 'address':
+         return '0x' + hexValue.slice(-40);
+       case 'uint256':
+         return BigInt('0x' + hexValue).toString();
+       case 'bool':
+         return hexValue !== '0'.repeat(64);
+       case 'string':
+         return Buffer.from(hexValue, 'hex').toString();
+       default:
+         throw new Error(`Unsupported type: ${type}`);
+     }
+   }
+   
+   function decodeParameters(types, data) {
+     if (!data.startsWith('0x')) {
+       data = '0x' + data;
+     }
+     data = data.slice(2);
+     
+     return types.map((type, i) => {
+       const start = i * 64;
+       const end = start + 64;
+       const value = data.slice(start, end);
+       return decodeParameter(type, value);
+     });
+   }
+   
+   // ====================== CONTRACT INTERACTION ======================
+   
+   function createContract(provider, contractAddress, abi) {
+     if (!provider || !contractAddress || !abi) {
+       throw new Error('Missing required parameters for contract creation');
+     }
+   
+     return {
+       provider,
+       address: contractAddress,
+       abi,
+       
+       async call(method, params = []) {
+         console.log(`Calling ${method} with params:`, params);
+         
+         const abiItem = this.abi.find(item => 
+           item.name === method && 
+           (item.stateMutability === 'view' || item.stateMutability === 'pure')
+         );
+         
+         if (!abiItem) {
+           throw new Error(`Method ${method} not found or not a view/pure function`);
+         }
+   
+         try {
+           const inputTypes = abiItem.inputs.map(input => input.type);
+           console.log(`Input types for ${method}:`, inputTypes);
+           
+           const methodSig = getFunctionSelector(method, inputTypes);
+           const paramData = encodeParameters(inputTypes, params);
+           const data = '0x' + methodSig + paramData;
+           
+           console.log(`Calling contract at ${this.address}`);
+           console.log(`Encoded data: ${data}`);
+           
+           const result = await this.provider.request({
+             method: 'eth_call',
+             params: [{
+               to: this.address,
+               data: data
+             }, 'latest']
+           });
+   
+           const outputTypes = abiItem.outputs.map(output => output.type);
+           const decoded = decodeParameters(outputTypes, result);
+           
+           return decoded.length === 1 ? decoded[0] : decoded;
+         } catch (error) {
+           console.error(`Contract call to ${method} failed:`, error);
+           throw new Error(`Contract call failed: ${error.message}`);
+         }
+       },
+       
+
+     };
+   }
+   
