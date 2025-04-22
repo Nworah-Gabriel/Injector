@@ -1,13 +1,18 @@
 {
-  "name": "your-library-name",
+  "name": "multichain-wallet-connector",
   "version": "1.0.0",
-  "description": "Your library description",
-  "main": "src/connector.js",
+  "description": "Universal EVM wallet connector supporting 50+ chains with complete transaction signing capabilities. Simplifies dApp development across multiple networks with a unified API.",
+  "main": "dist/connector.umd.min.js",
+  "module": "dist/connector.esm.min.js",
   "type": "module",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "build:dev": "rollup -c --environment NODE_ENV:development",
-    "test": "echo 'Write tests here!'"
+    "test": "echo 'Write tests here!'",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.js"
   },
   "exports": {
     ".": {
@@ -17,13 +22,35 @@
     }
   },
   "keywords": [
-    "connector",
     "ethereum",
+    "multichain",
+    "wallet-connect",
     "web3",
-    "npm library"
+    "metamask",
+    "coinbase-wallet",
+    "eip-1193",
+    "dapp-tools",
+    "blockchain",
+    "crypto-wallet",
+    "evm",
+    "smart-contracts"
   ],
-  "author": "Your Name",
+  "author": "Nworah Chimzuruoke Gabriel <gabrielnworah6@gmail.com>",
   "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nworah-Gabriel/multichain-wallet-connector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nworah-Gabriel/multichain-wallet-connector/issues"
+  },
+  "homepage": "https://github.com/Nworah-Gabriel/multichain-wallet-connector#readme",
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "aes-js": "^3.1.2",
     "ethers": "^5.0.0",
@@ -31,14 +58,6 @@
     "keccak": "^3.0.4",
     "terser": "^5.39.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Nworah-Gabriel/Injector"
-  },
-  "bugs": {
-    "url": "https://github.com/Nworah-Gabriel/Injector/issues"
-  },
-  "homepage": "https://github.com/Nworah-Gabriel/Injector#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
@@ -49,5 +68,8 @@
     "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
