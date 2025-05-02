@@ -9,6 +9,7 @@
 
 - 📜 **Contract Interaction**:
   - Read contract state
+  - Update contract state
   - Write transactions
   - Gas estimation
   
