@@ -3,45 +3,47 @@ import { EVM_CHAINS } from "../utils/chainConfig/EVM";
 import { signMessage, signTransaction, signTypedData, getBalance } from "../utils/transactions/transactions";
 
 /**
-* EVM Wallet Connector - Universal JavaScript Implementation
-* Supports: MetaMask, Coinbase Wallet, Rabby, Trust Wallet, and others
-* Handles: Multi-wallet detection, chain switching, auto-adding chains
-*/
+ * EVM Wallet Connector - Universal JavaScript Implementation
+ * Supports: MetaMask, Coinbase Wallet, Rabby, Trust Wallet, and others
+ * Handles: Multi-wallet detection, chain switching, auto-adding chains
+ */
 
 // ====================== CORE FUNCTIONALITY ======================
 
 /**
-* Detect all available Ethereum providers
-* @returns {Array} List of detected providers
-*/
+ * Detects all available Ethereum-compatible providers injected into the browser.
+ * Handles EIP-1193 standard and specific wallet extensions.
+ * 
+ * @returns {Array<Object>} List of detected providers
+ */
 export function detectProviders() {
     const providers = [];
-        
+
     // Standard EIP-1193 providers
     if (typeof window !== 'undefined' && window.ethereum) {
-        // Some wallets inject multiple providers into an array
         if (window.ethereum.providers?.length) {
             providers.push(...window.ethereum.providers);
         } else {
             providers.push(window.ethereum);
         }
     }
-        
+
     // Specific wallet injections
     if (typeof window !== 'undefined') {
         if (window.coinbaseWalletExtension) providers.push(window.coinbaseWalletExtension);
         if (window.rabby) providers.push(window.rabby);
         if (window.trustwallet) providers.push(window.trustwallet);
     }
-        
+
     return providers;
 }
 
 /**
-* Get provider name
-* @param {Object} provider - Wallet provider
-* @returns {String} Provider name
-*/
+ * Determines the human-readable name of the given provider.
+ * 
+ * @param {Object} provider - Ethereum wallet provider object
+ * @returns {String} Name of the wallet provider
+ */
 export function getProviderName(provider) {
     if (provider.isMetaMask) return 'MetaMask';
     if (provider.isRabby) return 'Rabby';
@@ -51,24 +53,23 @@ export function getProviderName(provider) {
 }
 
 /**
-* Connect to a wallet provider
-* @param {Object} provider - Wallet provider
-* @param {Number} [chainId] - Optional chain ID to switch to
-* @returns {Promise<Object>} Connection result
-*/
+ * Connects to a specified wallet provider and optionally switches to a target chain.
+ * Adds the chain if it is not already configured in the wallet.
+ * 
+ * @param {Object} provider - Wallet provider object
+ * @param {Number} [chainId] - Optional target chain ID to switch to
+ * @returns {Promise<Object>} Result of connection attempt including success status and account info
+ */
 export async function connectProvider(provider, chainId) {
     try {
-        // Request accounts
         const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        
-        // Handle chain switching if requested
+
         let finalChainId;
         if (chainId) {
             try {
                 await switchChain(provider, chainId);
                 finalChainId = chainId;
             } catch (switchError) {
-                // 4902 = Chain not added to wallet
                 if (switchError.code === 4902) {
                     await addChain(provider, chainId);
                     await switchChain(provider, chainId);
@@ -80,7 +81,7 @@ export async function connectProvider(provider, chainId) {
         } else {
             finalChainId = await getCurrentChainId(provider);
         }
-        
+
         return {
             success: true,
             account: accounts[0],
@@ -98,10 +99,12 @@ export async function connectProvider(provider, chainId) {
 }
 
 /**
-* Switch chain on a provider
-* @param {Object} provider - Wallet provider
-* @param {Number} chainId - Chain ID to switch to
-*/
+ * Requests the wallet provider to switch to the specified chain.
+ * 
+ * @param {Object} provider - Wallet provider object
+ * @param {Number} chainId - Chain ID to switch to
+ * @returns {Promise<void>}
+ */
 export async function switchChain(provider, chainId) {
     await provider.request({
         method: 'wallet_switchEthereumChain',
@@ -110,14 +113,17 @@ export async function switchChain(provider, chainId) {
 }
 
 /**
-* Add chain to a provider
-* @param {Object} provider - Wallet provider
-* @param {Number} chainId - Chain ID to add
-*/
+ * Requests the wallet provider to add a new chain configuration.
+ * Pulls configuration from the EVM_CHAINS constant.
+ * 
+ * @param {Object} provider - Wallet provider object
+ * @param {Number} chainId - Chain ID to add
+ * @returns {Promise<void>}
+ */
 export async function addChain(provider, chainId) {
     const chain = EVM_CHAINS[chainId];
     if (!chain) throw new Error(`Chain ID ${chainId} not supported`);
-    
+
     await provider.request({
         method: 'wallet_addEthereumChain',
         params: [{
@@ -135,10 +141,11 @@ export async function addChain(provider, chainId) {
 }
 
 /**
-* Get current chain ID from provider
-* @param {Object} provider - Wallet provider
-* @returns {Promise<Number>} Current chain ID
-*/
+ * Retrieves the currently connected chain ID from the provider.
+ * 
+ * @param {Object} provider - Wallet provider object
+ * @returns {Promise<Number>} Chain ID in decimal format
+ */
 export async function getCurrentChainId(provider) {
     const chainId = await provider.request({ method: 'eth_chainId' });
     return parseInt(chainId);
@@ -147,39 +154,39 @@ export async function getCurrentChainId(provider) {
 // ====================== USER-FACING API ======================
 
 /**
-* Main wallet connection function
-* @param {Object} [options] - Connection options
-* @param {Number} [options.chainId] - Chain ID to connect to
-* @param {String} [options.providerName] - Specific provider name to use
-* @param {Function} [options.onProviderSelect] - Callback for provider selection
-* @returns {Promise<Object>} Connection result
-*/
+ * Main function to connect a wallet to the app.
+ * Supports optional chain switching and user-driven wallet selection.
+ * 
+ * @param {Object} [options] - Configuration options
+ * @param {Number} [options.chainId] - Chain ID to connect to
+ * @param {String} [options.providerName] - Specific provider name to use
+ * @param {Function} [options.onProviderSelect] - Callback function for custom provider selection UI
+ * @returns {Promise<Object>} Connection result with provider and account details
+ */
 export async function connectWallet(options = {}) {
     const { chainId, providerName, onProviderSelect } = options;
     const providers = detectProviders();
-        
+
     if (providers.length === 0) {
-        return { 
-            success: false, 
-            error: 'No Ethereum wallets detected. Please install a wallet like MetaMask.' 
+        return {
+            success: false,
+            error: 'No Ethereum wallets detected. Please install a wallet like MetaMask.'
         };
     }
-        
+
     let provider;
-        
-    // Use specified provider if requested
+
     if (providerName) {
-        provider = providers.find(p => 
+        provider = providers.find(p =>
             getProviderName(p).toLowerCase() === providerName.toLowerCase()
         );
         if (!provider) {
-            return { 
-                success: false, 
-                error: `Requested wallet (${providerName}) not available` 
+            return {
+                success: false,
+                error: `Requested wallet (${providerName}) not available`
             };
         }
-    } 
-    // Let user select provider if multiple available
+    }
     else if (providers.length > 1 && typeof onProviderSelect === 'function') {
         try {
             provider = await onProviderSelect(providers.map(p => ({
@@ -190,22 +197,24 @@ export async function connectWallet(options = {}) {
         } catch (err) {
             return { success: false, error: 'Wallet selection failed' };
         }
-    } 
-    // Default to first provider
+    }
     else {
         provider = providers[0];
     }
-        
+
     return connectProvider(provider, chainId);
 }
 
 /**
-* Get supported chains
-* @returns {Object} Supported chains configuration
-*/
+ * Returns a list of supported chain configurations.
+ * 
+ * @returns {Object} Chain ID to configuration mapping from EVM_CHAINS
+ */
 export function getSupportedChains() {
     return { ...EVM_CHAINS };
 }
+
+// ====================== RE-EXPORTS ======================
 
 export {
     signTransaction,
@@ -213,4 +222,4 @@ export {
     signTypedData,
     getBalance,
     createContract
-  };
+};

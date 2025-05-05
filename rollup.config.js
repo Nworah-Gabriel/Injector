@@ -33,7 +33,7 @@ export default {
       entries: [
         {
           find: 'js-sha3',
-          replacement: 'node_modules/js-sha3/src/sha3.js', // Use the correct path to js-sha3
+          replacement: 'node_modules/js-sha3/src/sha3.js',
         },
       ],
     }),

@@ -8,7 +8,7 @@ export const EVM_CHAINS = {
     10: { name: 'Optimism', currency: 'ETH', rpc: 'https://mainnet.optimism.io', explorer: 'https://optimistic.etherscan.io' },
     43114: { name: 'Avalanche', currency: 'AVAX', rpc: 'https://api.avax.network/ext/bc/C/rpc', explorer: 'https://snowtrace.io' },
     250: { name: 'Fantom', currency: 'FTM', rpc: 'https://fantom-pokt.nodies.app', explorer: 'https://ftmscan.com' },
-    324: { name: 'zkSync Era', currency: 'ETH', rpc: 'https://mainnet.era.zksync.io', explorer: 'https://explorer.zksync.io'},
+    324: { name: 'zkSync Era', currency: 'ETH', rpc: 'https://mainnet.era.zksync.io', explorer: 'https://explorer.zksync.io' },
     59144: { name: 'Linea Mainnet', currency: 'ETH', rpc: 'https://rpc.linea.build', explorer: 'https://lineascan.build' },
     8453: { name: 'Base Mainnet', currency: 'ETH', rpc: 'https://base-mainnet.infura.io', explorer: 'https://basescan.org' },
     534352: { name: 'Scroll Mainnet', currency: 'ETH', rpc: 'https://rpc.scroll.io', explorer: 'https://scrollscan.com' },
