@@ -11,7 +11,7 @@ import {
   encodeParameter,
   getFunctionSelector,
   padHex
-} from "../abi";
+} from "../helpers/abi";
 
 /**
  * Creates a contract interface with read, write, and gas estimation functionalities.
