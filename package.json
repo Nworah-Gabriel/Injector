@@ -1,6 +1,6 @@
 {
   "name": "multichain-wallet-connector",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Universal EVM wallet connector supporting 50+ chains with complete transaction signing capabilities. Simplifies dApp development across multiple networks with a unified API.",
   "main": "dist/connector.umd.min.js",
   "module": "dist/connector.esm.min.js",
@@ -44,10 +44,12 @@
   "bugs": {
     "url": "https://github.com/Nworah-Gabriel/multichain-wallet-connector/issues"
   },
-  "homepage": "https://github.com/Nworah-Gabriel/multichain-wallet-connector#readme",
+  "homepage": "https://saggio.gitbook.io/multichain-wallet-connect",
   "files": [
     "dist/**/*",
     "src/**/*",
+    "test_template/**/*",
+    "examples/**/*",
     "README.md",
     "LICENSE"
   ],
