@@ -40,7 +40,7 @@ For quick integration without a package manager, include the library directly in
 
 ```html
 <!-- Load the minified UMD bundle -->
-<script src="https://cdn.jsdelivr.net/gh/Nworah-Gabriel/Injector@v1.0.3/dist/connector.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Nworah-Gabriel/multichain-wallet-connector@v1.0.3/dist/connector.umd.min.js"></script>
 ```
 
 ## Documentation
