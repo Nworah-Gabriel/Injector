@@ -31,7 +31,9 @@ Run one of the following commands in your project directory:
 
 ```bash
 npm install multichain-wallet-connector
-# or
+```
+or
+```bash
 yarn add multichain-wallet-connector
 ```
 ### 🌐 CDN Usage
