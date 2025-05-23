@@ -1,6 +1,6 @@
 {
   "name": "multichain-wallet-connector",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "Universal EVM wallet connector supporting 50+ chains with complete transaction signing capabilities. Simplifies dApp development across multiple networks with a unified API.",
   "main": "dist/connector.umd.min.js",
   "module": "dist/connector.esm.min.js",
